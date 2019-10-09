@@ -1,0 +1,4 @@
+/run.sh
+/run_receiver.sh
+/target/*
+!/target/rabbitmq-listener-1.0.war
