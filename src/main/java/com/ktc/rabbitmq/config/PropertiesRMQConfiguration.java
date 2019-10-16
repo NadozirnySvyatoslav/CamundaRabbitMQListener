@@ -18,7 +18,7 @@ public class PropertiesRMQConfiguration implements RMQConfiguration {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesRMQConfiguration.class);
 
-  public static final String ENV_PROPERTIES_PATH = "RMQ_CONFIG";
+  public static final String ENV_PROPERTIES_PATH = "TOMCAT_HOME";
   public static final String PROPERTIES_CLASSPATH_PREFIX = "classpath:";
   public static final String DEFAULT_PROPERTIES_PATH = PROPERTIES_CLASSPATH_PREFIX + "/rabbitmq.properties";
 
@@ -80,11 +80,20 @@ public class PropertiesRMQConfiguration implements RMQConfiguration {
   }
 
   protected InputStream getProperiesAsStream(String path) throws FileNotFoundException {
+
+    File configDir = new File(System.getProperty("catalina.base"), "conf");
+    File configFile = new File(configDir,"rabbitmq.properties");
+    if (configFile.exists()){
+	InputStream stream = new FileInputStream(configFile);
+	return stream;
+    }else{
+
     if (path.startsWith(PROPERTIES_CLASSPATH_PREFIX)) {
       String pathWithoutPrefix = path.substring(PROPERTIES_CLASSPATH_PREFIX.length());
       LOGGER.debug("load RMQ properties from classpath '{}'", pathWithoutPrefix);
       return getClass().getResourceAsStream(pathWithoutPrefix);
     } else {
+
       Path config = Paths.get(path);
       LOGGER.debug("load RMQ properties from path '{}'", config.toAbsolutePath());
       File file = config.toFile();
@@ -94,5 +103,6 @@ public class PropertiesRMQConfiguration implements RMQConfiguration {
         return null;
       }
     }
+   }
   }
 }

@@ -31,23 +31,22 @@ public class RMQNotificationWorker implements NotificationWorker {
       RMQConfiguration configuration = RMQConfigurationFactory.getConfiguration();
       url=configuration.getUrl();
       queue=configuration.getQueue();
-
+	LOGGER.debug("Url: "+url,this);
+	LOGGER.debug("Queue: "+queue,this);
       ConnectionFactory factory = new ConnectionFactory();
       factory.setUri(url);
       connection = factory.newConnection();
       channel = connection.createChannel();
-      channel.queueDeclare(queue, true, false, false,  null);
+//      channel.queueDeclare(queue, true, false, false,  null);
   }
 
   @Override
   public void run() {
-    while (runnning) {
 	try{
 	channel.basicConsume(queue,  true, callback, consumerTag -> {});
 	}catch(Exception e){
 
 	}
-    }
   }
 
  @Override

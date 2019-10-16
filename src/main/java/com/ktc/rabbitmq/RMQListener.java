@@ -45,9 +45,15 @@ public class RMQListener extends ServletProcessApplication {
 		}
 	    }
 	    Map<String,Object> headers=properties.getHeaders();
-	    String process_name=(String)headers.get("process_name");
-	    String message_name=(String)headers.get("message_name");
-	    String business_key=(String)headers.get("business_key");
+	    String process_name=null;
+	    String message_name=null;
+	    String business_key=null;
+	    if (headers.get("process_name")!=null)
+		process_name=headers.get("process_name").toString();
+	    if (headers.get("message_name")!=null)
+		message_name=headers.get("message_name").toString();
+	    if (headers.get("business_key")!=null)
+		business_key=headers.get("business_key").toString();
 	    Map<String,Object> vars=Variables.createVariables()
 		.putValue("contentType",properties.getContentType())
 		.putValue("contentEncoding",properties.getContentEncoding())
@@ -58,11 +64,16 @@ public class RMQListener extends ServletProcessApplication {
 		.putValue("replyTo",properties.getReplyTo())
         	.putValue("message", message);
 
-	    if (process_name!=null){
+    	    if (process_name!=null){
+	        LOGGER.debug("RMQ start process: "+process_name+" with "+business_key,this);
     		runtimeService.startProcessInstanceByKey(process_name,business_key,vars);
-	    }
+	    }else
 	    if (message_name!=null){
+		LOGGER.debug("RMQ send message: "+message_name+" with "+business_key,this);
     		runtimeService.correlateMessage(message_name,business_key,vars);
+	    }else{
+		LOGGER.debug("RMQ received message but not activity created ",this);
+
 	    }
 
 	    //runtimeService:
@@ -71,7 +82,7 @@ public class RMQListener extends ServletProcessApplication {
 	    //.	startProcessInstanceByMessage(String messageName, String businessKey, Map<String,Object> processVariables)
 
 	    }catch(Exception e){
-		LOGGER.error("Error {} "+e.getMessage(),this);
+		LOGGER.error("Error {} ",e);
 	    }
 	}
     });
