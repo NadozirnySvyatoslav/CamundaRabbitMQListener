@@ -19,26 +19,20 @@ public class RMQNotificationService {
 
 	protected ExecutorService executorService = null;
 	protected NotificationWorker notificationWorker;
-	protected final List<OnDelivery> handlers = new LinkedList<>();
-    
+	protected OnDelivery handler;
+    protected String url;    
+    protected String queue;    
+    protected String process;    
 
-	public RMQNotificationService() {
+	public RMQNotificationService(String url, String queue, String process) {
+        this.url=url;
+        this.queue=queue;
+        this.process=process;
 	}
 
 	public void start() throws Exception {
 		executorService = Executors.newSingleThreadExecutor();
-
-		// START THREAD
-		/* callback(){ 
-			Object message=GET_MESSAGE
-			handlers.forEach(handler -> handler.accept(message));
-		     }
-
-		*/
-		    notificationWorker=new RMQNotificationWorker( (consumerTag,delivery) ->{
-			handlers.forEach(handler -> handler.onDelivery(delivery));
-		    });
-
+	    notificationWorker=new RMQNotificationWorker(url, queue, (consumerTag, delivery )->{ handler.onDelivery(delivery, process ); } );
 		LOGGER.debug("start RMQ notification service: {}", notificationWorker);
 		executorService.submit(notificationWorker);
 	}
@@ -51,8 +45,8 @@ public class RMQNotificationService {
 			executorService = null;
 		}
 	}
-        public void registerHandler(OnDelivery handler) {
-                handlers.add(handler);
+        public void registerHandler( OnDelivery handler) {
+               this.handler = handler;
         }
 
 }

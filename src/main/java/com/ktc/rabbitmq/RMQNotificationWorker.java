@@ -18,34 +18,33 @@ public class RMQNotificationWorker implements NotificationWorker {
   private DeliverCallback callback;
   private String url="";
   private String queue="";
+  public String process="";
   private Channel channel;
   private Connection connection;
 
-   public RMQNotificationWorker(DeliverCallback callback) 
+   public RMQNotificationWorker(String url, String queue, DeliverCallback callback) 
 	throws java.net.URISyntaxException, 
 	java.io.IOException,
 	java.security.NoSuchAlgorithmException,
 	java.security.KeyManagementException,
 	java.util.concurrent.TimeoutException {
-      this.callback=callback;
-      RMQConfiguration configuration = RMQConfigurationFactory.getConfiguration();
-      url=configuration.getUrl();
-      queue=configuration.getQueue();
-	LOGGER.debug("Url: "+url,this);
-	LOGGER.debug("Queue: "+queue,this);
-      ConnectionFactory factory = new ConnectionFactory();
-      factory.setUri(url);
-      connection = factory.newConnection();
-      channel = connection.createChannel();
+    this.callback=callback;
+    this.url=url;
+    this.queue=queue;
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setUri(url);
+    connection = factory.newConnection();
+    channel = connection.createChannel();
 //      channel.queueDeclare(queue, true, false, false,  null);
   }
 
   @Override
   public void run() {
 	try{
-	channel.basicConsume(queue,  true, callback, consumerTag -> {});
+        LOGGER.debug( "RMQ Start consume: "+ queue,this);
+    	channel.basicConsume(queue,  true, callback, consumerTag -> {});
 	}catch(Exception e){
-
+        LOGGER.error( "RMQ ERROR: [" + queue + "] " + e.getMessage(),this);
 	}
   }
 
@@ -64,7 +63,4 @@ public class RMQNotificationWorker implements NotificationWorker {
   public String toString() {
     return "RMQNotificationWorker";
   }
-
-    
-
 }

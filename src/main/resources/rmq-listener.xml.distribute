@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+<services>
+    <service>
+	    <rmq_queue>queue-name</rmq_queue>
+	    <process_key>process_name</process_key>
+    </service>
+</services>
+<rmq_uri>amqp://user:password@host.local/%2F</rmq_uri>
+</configuration>

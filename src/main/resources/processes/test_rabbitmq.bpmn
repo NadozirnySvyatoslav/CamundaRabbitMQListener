@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0sc5zlt" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.3.5">
+  <bpmn:process id="Test_rabbitmq_listener" name="Test rabbitmq listener" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1a1156f</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTask_0a3sda0" name="Test rabbitmq">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="url">amqp:///</camunda:inputParameter>
+            <camunda:inputParameter name="message">
+              <camunda:script scriptFormat="javascript">var obj={
+    'Settings': {
+    'TaskId': "5e941b19817da05755522db9",
+    }
+  };
+JSON.stringify(obj);</camunda:script>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="type">message_type</camunda:inputParameter>
+            <camunda:inputParameter name="routingKey">routing_key</camunda:inputParameter>
+            <camunda:inputParameter name="contentType">application/json</camunda:inputParameter>
+            <camunda:inputParameter name="contentEncoding">UTF-8</camunda:inputParameter>
+            <camunda:inputParameter name="appId">RabbitMQ</camunda:inputParameter>
+            <camunda:inputParameter name="correlation_id">message/message_reply/${execution.processBusinessKey}</camunda:inputParameter>
+            <camunda:inputParameter name="reply_to"></camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>rabbitmq</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1a1156f</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bok100</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1a1156f" sourceRef="StartEvent_1" targetRef="ServiceTask_0a3sda0" />
+    <bpmn:sequenceFlow id="SequenceFlow_0bok100" sourceRef="ServiceTask_0a3sda0" targetRef="IntermediateThrowEvent_0xheq34" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kvjf6i" sourceRef="IntermediateThrowEvent_0xheq34" targetRef="Task_1tavkue" />
+    <bpmn:userTask id="Task_1tavkue">
+      <bpmn:incoming>SequenceFlow_0kvjf6i</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0f184tr</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_0ilv1wi">
+      <bpmn:incoming>SequenceFlow_0f184tr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0f184tr" sourceRef="Task_1tavkue" targetRef="EndEvent_0ilv1wi" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0xheq34">
+      <bpmn:incoming>SequenceFlow_0bok100</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kvjf6i</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_03lpwok" />
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_03lpwok" name="message_reply" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Test_rabbitmq">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0a3sda0_di" bpmnElement="ServiceTask_0a3sda0" bioc:stroke="rgb(251, 140, 0)" bioc:fill="rgb(255, 224, 178)">
+        <dc:Bounds x="290" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1a1156f_di" bpmnElement="SequenceFlow_1a1156f">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="290" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bok100_di" bpmnElement="SequenceFlow_0bok100">
+        <di:waypoint x="390" y="117" />
+        <di:waypoint x="472" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kvjf6i_di" bpmnElement="SequenceFlow_0kvjf6i">
+        <di:waypoint x="508" y="117" />
+        <di:waypoint x="590" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1839czh_di" bpmnElement="Task_1tavkue">
+        <dc:Bounds x="590" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ilv1wi_di" bpmnElement="EndEvent_0ilv1wi">
+        <dc:Bounds x="772" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0f184tr_di" bpmnElement="SequenceFlow_0f184tr">
+        <di:waypoint x="690" y="117" />
+        <di:waypoint x="772" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1ogvpvz_di" bpmnElement="IntermediateThrowEvent_0xheq34">
+        <dc:Bounds x="472" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
