@@ -52,6 +52,7 @@ public class RMQListener extends ServletProcessApplication {
         		.putValue("contentType",properties.getContentType())
         		.putValue("contentEncoding",properties.getContentEncoding())
         		.putValue("appId",properties.getAppId())
+        		.putValue("routingKey",delivery.getEnvelope().getRoutingKey())
         		.putValue("messageId",properties.getMessageId())
         		.putValue("correlationId",properties.getCorrelationId())
         		.putValue("type",properties.getType())
