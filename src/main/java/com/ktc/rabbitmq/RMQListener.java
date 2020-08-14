@@ -45,7 +45,7 @@ public class RMQListener extends ServletProcessApplication {
         	    if (properties.getContentType()!=null){
 		            type=properties.getContentType();
         	    }
-    		LOGGER.debug("RMQ received message type: " + properties.getType(), this);
+    		LOGGER.debug("RMQ received message routing-key: " + delivery.getEnvelope().getRoutingKey(), this);
 	    	LOGGER.debug("RMQ received message content-type: " + type, this);
 
                 Map<String,Object> vars=Variables.createVariables()
@@ -71,7 +71,7 @@ public class RMQListener extends ServletProcessApplication {
                      business_key=properties.getCorrelationId();
 
            	    if (process_name!=null){
-        	        LOGGER.debug("RMQ start process: \""+process_name+"\" with businessKey: "+business_key+"\nMessage:\n"+message,this);
+        	        LOGGER.debug("RMQ start process: \""+process_name+"\" with businessKey: "+business_key + "\nMessage ID:" + properties.getMessageId() + "\nMessage:\n"+message ,this);
             		runtimeService.startProcessInstanceByKey(process_name,business_key,vars);
         	    }else{
 		            LOGGER.debug("RMQ received message but not activity created ",this);
