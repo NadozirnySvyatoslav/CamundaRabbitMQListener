@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 public class RMQNotificationWorker implements NotificationWorker {
 
   private final static Logger LOGGER = LoggerFactory.getLogger(RMQNotificationWorker.class);
-  protected boolean runnning = true;
+  protected boolean running = true;
   private DeliverCallback callback;
   private String url="";
   private String queue="";
@@ -40,9 +40,15 @@ public class RMQNotificationWorker implements NotificationWorker {
 
   @Override
   public void run() {
+    int i=0;
 	try{
-        LOGGER.debug( "RMQ Start consume: "+ queue,this);
-    	channel.basicConsume(queue,  true, callback, consumerTag -> {});
+        while(running){
+            LOGGER.debug( "RMQ Start consume: "+ queue,this);
+    	    channel.basicConsume(queue,  true, callback, consumerTag -> {});
+            if (running)
+                LOGGER.debug( "Try Restart : " + i,this);
+            i++;
+        }
 	}catch(Exception e){
         LOGGER.error( "RMQ ERROR: [" + queue + "] " + e.getMessage(),this);
 	}
@@ -50,12 +56,12 @@ public class RMQNotificationWorker implements NotificationWorker {
 
  @Override
   public void stop() {
-    runnning = false;
+    running = false;
     try{
-    channel.close();
-    connection.close();
+        channel.close();
+        connection.close();
     }catch(Exception e){
-
+        LOGGER.error( "RMQ ERROR: [" + queue + "] " + e.getMessage(),this);
 	}
   }
 
