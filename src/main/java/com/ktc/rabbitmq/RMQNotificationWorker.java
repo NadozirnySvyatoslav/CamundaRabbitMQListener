@@ -40,15 +40,13 @@ public class RMQNotificationWorker implements NotificationWorker {
 
   @Override
   public void run() {
-    int i=0;
 	try{
+        LOGGER.debug( "RMQ Start consume: "+ queue,this);
         while(running){
-            LOGGER.debug( "RMQ Start consume: "+ queue,this);
     	    channel.basicConsume(queue,  true, callback, consumerTag -> {});
             if (running)
-                LOGGER.debug( "Try Restart : " + i,this);
-            i++;
-        }
+                Thread.sleep(30000);
+         }
 	}catch(Exception e){
         LOGGER.error( "RMQ ERROR: [" + queue + "] " + e.getMessage(),this);
 	}
