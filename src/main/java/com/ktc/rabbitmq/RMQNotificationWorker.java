@@ -33,7 +33,8 @@ public class RMQNotificationWorker implements NotificationWorker {
     this.queue=queue;
     ConnectionFactory factory = new ConnectionFactory();
     factory.setUri(url);
-    connection = factory.newConnection();
+    connection = factory.newConnection("Camunda (" + queue +")");
+    
     channel = connection.createChannel();
 //      channel.queueDeclare(queue, true, false, false,  null);
   }
@@ -42,10 +43,12 @@ public class RMQNotificationWorker implements NotificationWorker {
   public void run() {
 	try{
         LOGGER.debug( "RMQ Start consume: "+ queue,this);
+   	    channel.basicConsume(queue,  true, callback, consumerTag -> {});
         while(running){
-    	    channel.basicConsume(queue,  true, callback, consumerTag -> {});
-            if (running)
-                Thread.sleep(30000);
+           if (!channel.isOpen()){
+           	    channel.basicConsume(queue,  true, callback, consumerTag -> {});
+             }
+           Thread.sleep(30000);
          }
 	}catch(Exception e){
         LOGGER.error( "RMQ ERROR: [" + queue + "] " + e.getMessage(),this);
