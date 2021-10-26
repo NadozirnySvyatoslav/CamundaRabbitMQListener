@@ -18,7 +18,7 @@ public class RMQNotificationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RMQNotificationService.class);
 
 	protected ExecutorService executorService = null;
-	protected NotificationWorker notificationWorker;
+	public RMQNotificationWorker notificationWorker;
 	protected OnDelivery handler;
     protected String url;    
     protected String queue;    
@@ -32,7 +32,7 @@ public class RMQNotificationService {
 
 	public void start() throws Exception {
 		executorService = Executors.newSingleThreadExecutor();
-	    notificationWorker=new RMQNotificationWorker(url, queue, (consumerTag, delivery )->{ handler.onDelivery(delivery, process ); } );
+	    notificationWorker=new RMQNotificationWorker(url, queue, (consumerTag, delivery )->{ handler.onDelivery( delivery, process ); } );
 		LOGGER.debug("start RMQ notification service: {}", notificationWorker);
 		executorService.submit(notificationWorker);
 	}

@@ -40,6 +40,7 @@ public class RMQListener extends ServletProcessApplication {
     	public void onDelivery(Delivery delivery, String process_name){
 	        try{
 	            AMQP.BasicProperties properties=delivery.getProperties();
+                long deliveryTag = delivery.getEnvelope().getDeliveryTag();
         	    String type="";
         	    String message="";
         	    if (properties.getContentType()!=null){
@@ -73,6 +74,7 @@ public class RMQListener extends ServletProcessApplication {
            	    if (process_name!=null){
         	        LOGGER.debug("RMQ start process: \""+process_name+"\" with businessKey: "+business_key + "\nMessage ID:" + properties.getMessageId() + "\nMessage:\n"+message ,this);
             		runtimeService.startProcessInstanceByKey(process_name,business_key,vars);
+                    //notificationService.notificationWorker.channel.basicAck(deliveryTag, false);
         	    }else{
 		            LOGGER.debug("RMQ received message but not activity created ",this);
 	            }

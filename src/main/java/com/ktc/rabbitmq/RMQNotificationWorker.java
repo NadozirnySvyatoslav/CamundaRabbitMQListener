@@ -19,7 +19,7 @@ public class RMQNotificationWorker implements NotificationWorker {
   private String url="";
   private String queue="";
   public String process="";
-  private Channel channel;
+  public Channel channel;
   private Connection connection;
 
    public RMQNotificationWorker(String url, String queue, DeliverCallback callback) 
